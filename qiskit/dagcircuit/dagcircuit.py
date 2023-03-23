@@ -34,6 +34,7 @@ from qiskit.circuit.exceptions import CircuitError
 from qiskit.circuit.quantumregister import QuantumRegister, Qubit
 from qiskit.circuit.classicalregister import ClassicalRegister, Clbit
 from qiskit.circuit.gate import Gate
+from qiskit.circuit.measure import Measure
 from qiskit.circuit.instruction import Instruction
 from qiskit.circuit.parameterexpression import ParameterExpression
 from qiskit.dagcircuit.exceptions import DAGCircuitError
@@ -179,7 +180,7 @@ class DAGCircuit:
                 # Unassigned parameter
                 return operand
 
-        if isinstance(gate, Gate):
+        if isinstance(gate, (Gate, Measure)):
             params = gate.params
             gate = gate.name
         if params is not None:
@@ -1441,8 +1442,8 @@ class DAGCircuit:
         """Get the list of "op" nodes in the dag.
 
         Args:
-            op (Type): :class:`qiskit.circuit.Operation` subclass op nodes to
-                return. If None, return all op nodes.
+            op (Type): :class:`qiskit.circuit.Operation` subclass op nodes,
+                or tuple of such subclasses to return. If None, return all op nodes.
             include_directives (bool): include `barrier`, `snapshot` etc.
 
         Returns:

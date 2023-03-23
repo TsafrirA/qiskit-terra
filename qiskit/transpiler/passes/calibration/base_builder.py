@@ -20,6 +20,8 @@ from qiskit.dagcircuit import DAGCircuit
 from qiskit.pulse import Schedule, ScheduleBlock
 from qiskit.pulse.calibration_entries import CalibrationPublisher
 from qiskit.transpiler.basepasses import TransformationPass
+from qiskit.circuit.gate import Gate
+from qiskit.circuit.measure import Measure
 
 from .exceptions import CalibrationNotAvailable
 
@@ -61,7 +63,7 @@ class CalibrationBuilder(TransformationPass):
             A DAG with calibrations added to it.
         """
         qubit_map = {qubit: i for i, qubit in enumerate(dag.qubits)}
-        for node in dag.gate_nodes():
+        for node in dag.op_nodes(op=(Gate, Measure)):
             qubits = [qubit_map[q] for q in node.qargs]
 
             if self.supported(node.op, qubits) and not dag.has_calibration_for(node):
