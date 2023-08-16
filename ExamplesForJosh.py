@@ -237,4 +237,15 @@ def qudit_example() -> PulseIR:
 
     return pulse_ir
 
-print(general_example())
+temp=ecr_and_measure()
+print(temp)
+print(temp.frames())
+print(temp.mixed_frames())
+print(temp.logical_elements())
+print(temp.flatten())
+print(temp.get_acquire_instructions(Qubit(3)))
+print(temp.get_instructions_by_mixed_frame(list(temp.mixed_frames())[1]))
+temp = qudit_example()
+print(temp)
+temp.sort_by_t0()
+print(temp)
