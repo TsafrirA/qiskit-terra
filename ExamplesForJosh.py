@@ -185,7 +185,7 @@ def general_example() -> PulseIR:
         t0=8000,
     )
     pulse_ir.add_element(inst)
-    return inst
+    return pulse_ir
 
 
 def qudit_example() -> PulseIR:
@@ -236,3 +236,5 @@ def qudit_example() -> PulseIR:
     pulse_ir.add_element(inst)
 
     return pulse_ir
+
+print(general_example())
