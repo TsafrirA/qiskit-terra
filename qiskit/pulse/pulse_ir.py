@@ -272,7 +272,7 @@ class PulseIR:
                 frames.add(element.frame)
             elif isinstance(element, PulseIR):
                 frames |= element.frames()
-        return list(frames)
+        return frames
 
     def logical_elements(self) -> List[LogicalElement]:
         """Recursively list all logical elements in the IR"""
@@ -284,7 +284,7 @@ class PulseIR:
                 logical_elements.add(element.qubit)
             else:
                 logical_elements |= element.logical_elements()
-        return list(logical_elements)
+        return logical_elements
 
     def mixed_frames(self) -> List[MixedFrame]:
         """Recursively list all mixed frames in the IR"""
@@ -297,7 +297,7 @@ class PulseIR:
                 mixed_frames.add(MixedFrame(element.logical_element, element.frame))
             elif isinstance(element, PulseIR):
                 mixed_frames |= element.mixed_frames()
-        return list(mixed_frames)
+        return mixed_frames
 
     def flatten(self) -> "PulseIR":
         """Recursively flatten the IR into a single block"""
