@@ -57,7 +57,7 @@ def x_gate_and_measure() -> PulseIR:
 
 
 def ecr_and_measure() -> PulseIR:
-    """echoed cross resonance on qubits 3 and 4. No delays"""
+    """echoed cross resonance on qubits 3 and 5. No delays"""
     pulse_ir = PulseIR()
 
     block = PulseIR()
@@ -74,7 +74,7 @@ def ecr_and_measure() -> PulseIR:
     inst2 = GenericInstruction(
         instruction_type="Play",
         operand=pulse2,
-        logical_element=Qubit(4),
+        logical_element=Qubit(5),
         frame=QubitFrame(3),
         t0=0,
     )
@@ -85,8 +85,8 @@ def ecr_and_measure() -> PulseIR:
     inst = GenericInstruction(
         instruction_type="Play",
         operand=pulse,
-        logical_element=Qubit(4),
-        frame=QubitFrame(4),
+        logical_element=Qubit(5),
+        frame=QubitFrame(5),
         t0=1072,
     )
     pulse_ir.add_element(inst)
@@ -105,7 +105,7 @@ def ecr_and_measure() -> PulseIR:
     inst2 = GenericInstruction(
         instruction_type="Play",
         operand=pulse2,
-        logical_element=Qubit(4),
+        logical_element=Qubit(5),
         frame=QubitFrame(3),
         t0=1328,
     )
@@ -116,7 +116,7 @@ def ecr_and_measure() -> PulseIR:
 
     meas_block = PulseIR()
     meas_block.add_element(measure_qubit(3, 3))
-    meas_block.add_element(measure_qubit(4, 4))
+    meas_block.add_element(measure_qubit(5, 5))
     meas_block.shift_t0(final_time)
     pulse_ir.add_element(meas_block)
 
@@ -237,15 +237,15 @@ def qudit_example() -> PulseIR:
 
     return pulse_ir
 
-temp=ecr_and_measure()
-print(temp)
-print(temp.frames())
-print(temp.mixed_frames())
-print(temp.logical_elements())
-print(temp.flatten())
-print(temp.get_acquire_instructions(Qubit(3)))
-print(temp.get_instructions_by_mixed_frame(list(temp.mixed_frames())[1]))
-temp = qudit_example()
-print(temp)
-temp.sort_by_t0()
-print(temp)
+# temp=ecr_and_measure()
+# print(temp)
+# print(temp.frames())
+# print(temp.mixed_frames())
+# print(temp.logical_elements())
+# print(temp.flatten())
+# print(temp.get_acquire_instructions(Qubit(3)))
+# print(temp.get_instructions_by_mixed_frame(list(temp.mixed_frames())[1]))
+# temp = qudit_example()
+# print(temp)
+# temp.sort_by_t0()
+# print(temp)
