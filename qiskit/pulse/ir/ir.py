@@ -152,21 +152,9 @@ class SequenceIR:
 
         return scheduled_elements
 
-    def initial_time(self) -> int | None:
-        """Return initial time.
-
-        Defaults to ``None``.
-        """
-        first_nodes = self._sequence.successor_indices(0)
-        if not first_nodes:
-            return None
-        try:
-            return min(self._time_table[ind] for ind in first_nodes)
-        except TypeError:
-            return None
-
-    def final_time(self) -> int | None:
-        """Return final time.
+    @property
+    def duration(self) -> int | None:
+        """Return the duration of the SequenceIR.
 
         Defaults to ``None``.
         """
@@ -178,17 +166,6 @@ class SequenceIR:
                 self._time_table[ind] + self._sequence.get_node_data(ind).duration
                 for ind in last_nodes
             )
-        except TypeError:
-            return None
-
-    @property
-    def duration(self) -> int | None:
-        """Return the duration of the SequenceIR.
-
-        Defaults to ``None``.
-        """
-        try:
-            return self.final_time() - self.initial_time()
         except TypeError:
             return None
 
