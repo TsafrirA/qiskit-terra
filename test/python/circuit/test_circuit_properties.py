@@ -1127,9 +1127,9 @@ class TestCircuitProperties(QiskitTestCase):
         circ = QuantumCircuit(2)
 
         with pulse.build() as q0_x180:
-            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), channel=pulse.DriveChannel(0))
         with pulse.build() as q1_y90:
-            pulse.play(pulse.library.Gaussian(20, -1.0, 3.0), pulse.DriveChannel(1))
+            pulse.play(pulse.library.Gaussian(20, -1.0, 3.0), channel=pulse.DriveChannel(1))
 
         # Add calibration
         circ.add_calibration(RXGate(3.14), [0], q0_x180)
@@ -1148,7 +1148,7 @@ class TestCircuitProperties(QiskitTestCase):
         circ = QuantumCircuit(3)
 
         with pulse.build() as q0_x180:
-            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), channel=pulse.DriveChannel(0))
 
         # Add calibrations with a custom gate 'rxt'
         circ.add_calibration("rxt", [0], q0_x180, params=[1.57, 3.14, 4.71])
@@ -1164,7 +1164,7 @@ class TestCircuitProperties(QiskitTestCase):
         circ = QuantumCircuit(3)
 
         with pulse.build() as q0_x180:
-            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), channel=pulse.DriveChannel(0))
 
         circ.add_calibration("h", [0], q0_x180)
 
@@ -1177,7 +1177,7 @@ class TestCircuitProperties(QiskitTestCase):
         qc = QuantumCircuit(3)
 
         with pulse.build() as q0_x180:
-            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), channel=pulse.DriveChannel(0))
         qc.add_calibration("h", [0], q0_x180)
 
         qc.h(0)
@@ -1192,7 +1192,7 @@ class TestCircuitProperties(QiskitTestCase):
         qc = QuantumCircuit(3)
 
         with pulse.build() as q0_x180:
-            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), channel=pulse.DriveChannel(0))
         qc.add_calibration("h", [0], q0_x180)
 
         qc.h(0)

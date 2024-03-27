@@ -25,18 +25,18 @@ class EchoedCrossResonanceConstructionBench:
         with builder.build() as x_ctrl:
             builder.play(
                 library.Drag(160, 0.2, 40, 1.5),
-                channels.DriveChannel(0),
+                channel=channels.DriveChannel(0),
             )
         self.x_ctrl = x_ctrl
 
         with builder.build() as cr45p:
             builder.play(
                 library.GaussianSquare(800, 0.4, 64, 544),
-                channels.ControlChannel(0),
+                channel=channels.ControlChannel(0),
             )
             builder.play(
                 library.GaussianSquare(800, 0.1, 64, 544),
-                channels.DriveChannel(1),
+                channel=channels.DriveChannel(1),
             )
         self.cr45p = cr45p
 
@@ -47,15 +47,15 @@ class EchoedCrossResonanceConstructionBench:
                 with builder.align_left():
                     builder.play(
                         library.GaussianSquare(800, 0.4, 64, 544),
-                        channels.ControlChannel(0),
+                        channel=channels.ControlChannel(0),
                     )
                     builder.play(
                         library.GaussianSquare(800, 0.1, 64, 544),
-                        channels.DriveChannel(1),
+                        channel=channels.DriveChannel(1),
                     )
                 builder.play(
                     library.Drag(160, 0.2, 40, 1.5),
-                    channels.DriveChannel(0),
+                    channel=channels.DriveChannel(0),
                 )
                 with builder.phase_offset(
                     np.pi,
@@ -65,15 +65,15 @@ class EchoedCrossResonanceConstructionBench:
                     with builder.align_left():
                         builder.play(
                             library.GaussianSquare(800, 0.4, 64, 544),
-                            channels.ControlChannel(0),
+                            channel=channels.ControlChannel(0),
                         )
                         builder.play(
                             library.GaussianSquare(800, 0.1, 64, 544),
-                            channels.DriveChannel(1),
+                            channel=channels.DriveChannel(1),
                         )
                 builder.play(
                     library.Drag(160, 0.2, 40, 1.5),
-                    channels.DriveChannel(0),
+                    channel=channels.DriveChannel(0),
                 )
 
     def time_with_call(self):
@@ -125,7 +125,7 @@ class ParameterizedScheduleBench:
         with builder.build() as schedule:
             builder.play(
                 library.Constant(self.p0, self.p1),
-                channels.DriveChannel(self.p2),
+                channel=channels.DriveChannel(self.p2),
             )
         self.schedule = schedule
 

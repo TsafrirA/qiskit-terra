@@ -74,7 +74,7 @@ class TestLoadFromQPY(QpyScheduleTestCase):
         with builder.build() as test_sched:
             builder.play(
                 envelope(*params),
-                channel(0),
+                channel=channel(0),
             )
         self.assert_roundtrip_equal(test_sched)
 
@@ -92,7 +92,7 @@ class TestLoadFromQPY(QpyScheduleTestCase):
             name="pulse1",
         )
         with builder.build() as test_sched:
-            builder.play(my_pulse, DriveChannel(0))
+            builder.play(my_pulse, channel=DriveChannel(0))
         self.assert_roundtrip_equal(test_sched)
 
     def test_symbolic_amplitude_limit(self):
@@ -100,7 +100,7 @@ class TestLoadFromQPY(QpyScheduleTestCase):
         with builder.build() as test_sched:
             builder.play(
                 Gaussian(160, 20, 40, limit_amplitude=False),
-                DriveChannel(0),
+                channel=DriveChannel(0),
             )
         self.assert_roundtrip_equal(test_sched)
 
@@ -109,7 +109,7 @@ class TestLoadFromQPY(QpyScheduleTestCase):
         with builder.build() as test_sched:
             builder.play(
                 Waveform([1, 2, 3, 4, 5], limit_amplitude=False),
-                DriveChannel(0),
+                channel=DriveChannel(0),
             )
         self.assert_roundtrip_equal(test_sched)
 
@@ -119,27 +119,27 @@ class TestLoadFromQPY(QpyScheduleTestCase):
         t = np.linspace(0, 1, 100)
         waveform = 0.1 * np.sin(2 * np.pi * t)
         with builder.build() as test_sched:
-            builder.play(waveform, DriveChannel(0))
+            builder.play(waveform, channel=DriveChannel(0))
         self.assert_roundtrip_equal(test_sched)
 
     def test_phases(self):
         """Test phase."""
         with builder.build() as test_sched:
-            builder.shift_phase(0.1, DriveChannel(0))
-            builder.set_phase(0.4, DriveChannel(1))
+            builder.shift_phase(0.1, channel=DriveChannel(0))
+            builder.set_phase(0.4, channel=DriveChannel(1))
         self.assert_roundtrip_equal(test_sched)
 
     def test_frequencies(self):
         """Test frequency."""
         with builder.build() as test_sched:
-            builder.shift_frequency(10e6, DriveChannel(0))
-            builder.set_frequency(5e9, DriveChannel(1))
+            builder.shift_frequency(10e6, channel=DriveChannel(0))
+            builder.set_frequency(5e9, channel=DriveChannel(1))
         self.assert_roundtrip_equal(test_sched)
 
     def test_delay(self):
         """Test delay."""
         with builder.build() as test_sched:
-            builder.delay(100, DriveChannel(0))
+            builder.delay(100, channel=DriveChannel(0))
         self.assert_roundtrip_equal(test_sched)
 
     def test_barrier(self):
@@ -171,7 +171,7 @@ class TestLoadFromQPY(QpyScheduleTestCase):
     def test_parameterized(self, channel, *params):
         """Test playing parameterized pulse."""
         with builder.build() as test_sched:
-            builder.play(Gaussian(*params), DriveChannel(channel))
+            builder.play(Gaussian(*params), channel=DriveChannel(channel))
         self.assert_roundtrip_equal(test_sched)
 
     def test_nested_blocks(self):
@@ -179,14 +179,14 @@ class TestLoadFromQPY(QpyScheduleTestCase):
         with builder.build() as test_sched:
             with builder.align_equispaced(duration=1200):
                 with builder.align_left():
-                    builder.delay(100, DriveChannel(0))
-                    builder.delay(200, DriveChannel(1))
+                    builder.delay(100, channel=DriveChannel(0))
+                    builder.delay(200, channel=DriveChannel(1))
                 with builder.align_right():
-                    builder.delay(100, DriveChannel(0))
-                    builder.delay(200, DriveChannel(1))
+                    builder.delay(100, channel=DriveChannel(0))
+                    builder.delay(200, channel=DriveChannel(1))
                 with builder.align_sequential():
-                    builder.delay(100, DriveChannel(0))
-                    builder.delay(200, DriveChannel(1))
+                    builder.delay(100, channel=DriveChannel(0))
+                    builder.delay(200, channel=DriveChannel(1))
         self.assert_roundtrip_equal(test_sched)
 
     def test_called_schedule(self):
@@ -218,7 +218,7 @@ class TestLoadFromQPY(QpyScheduleTestCase):
             builder.reference("custom1", "q1")
 
         with builder.build() as sub_q0:
-            builder.delay(Parameter("duration"), DriveChannel(0))
+            builder.delay(Parameter("duration"), channel=DriveChannel(0))
 
         test_sched.assign_references(
             {("custom1", "q0"): sub_q0},
@@ -235,10 +235,10 @@ class TestLoadFromQPY(QpyScheduleTestCase):
             builder.reference("custom1", "q1")
 
         with builder.build() as sub_q0:
-            builder.delay(Parameter("duration"), DriveChannel(0))
+            builder.delay(Parameter("duration"), channel=DriveChannel(0))
 
         with builder.build() as sub_q1:
-            builder.delay(Parameter("duration"), DriveChannel(1))
+            builder.delay(Parameter("duration"), channel=DriveChannel(1))
 
         test_sched.assign_references(
             {("custom1", "q0"): sub_q0, ("custom1", "q1"): sub_q1},
@@ -252,21 +252,21 @@ class TestLoadFromQPY(QpyScheduleTestCase):
         with builder.build() as test_sched:
             with builder.align_sequential():
                 # H
-                builder.shift_phase(-1.57, DriveChannel(0))
-                builder.play(Drag(160, 0.05, 40, 1.3), DriveChannel(0))
-                builder.shift_phase(-1.57, DriveChannel(0))
+                builder.shift_phase(-1.57, channel=DriveChannel(0))
+                builder.play(Drag(160, 0.05, 40, 1.3), channel=DriveChannel(0))
+                builder.shift_phase(-1.57, channel=DriveChannel(0))
                 # ECR
                 with builder.align_left():
-                    builder.play(GaussianSquare(800, 0.05, 64, 544), DriveChannel(1))
-                    builder.play(GaussianSquare(800, 0.22, 64, 544, 2), ControlChannel(0))
-                builder.play(Drag(160, 0.1, 40, 1.5), DriveChannel(0))
+                    builder.play(GaussianSquare(800, 0.05, 64, 544), channel=DriveChannel(1))
+                    builder.play(GaussianSquare(800, 0.22, 64, 544, 2), channel=ControlChannel(0))
+                builder.play(Drag(160, 0.1, 40, 1.5), channel=DriveChannel(0))
                 with builder.align_left():
-                    builder.play(GaussianSquare(800, -0.05, 64, 544), DriveChannel(1))
-                    builder.play(GaussianSquare(800, -0.22, 64, 544, 2), ControlChannel(0))
-                builder.play(Drag(160, 0.1, 40, 1.5), DriveChannel(0))
+                    builder.play(GaussianSquare(800, -0.05, 64, 544), channel=DriveChannel(1))
+                    builder.play(GaussianSquare(800, -0.22, 64, 544, 2), channel=ControlChannel(0))
+                builder.play(Drag(160, 0.1, 40, 1.5), channel=DriveChannel(0))
                 # Measure
                 with builder.align_left():
-                    builder.play(GaussianSquare(8000, 0.2, 64, 7744), MeasureChannel(0))
+                    builder.play(GaussianSquare(8000, 0.2, 64, 7744), channel=MeasureChannel(0))
                     builder.acquire(8000, AcquireChannel(0), MemorySlot(0))
 
         self.assert_roundtrip_equal(test_sched)
@@ -277,21 +277,21 @@ class TestLoadFromQPY(QpyScheduleTestCase):
         with builder.build() as test_sched:
             with builder.align_sequential():
                 # H
-                builder.shift_phase(-1.57, DriveChannel(0))
-                builder.play(Drag(160, 0.05, 40, 1.3), DriveChannel(0))
-                builder.shift_phase(-1.57, DriveChannel(0))
+                builder.shift_phase(-1.57, channel=DriveChannel(0))
+                builder.play(Drag(160, 0.05, 40, 1.3), channel=DriveChannel(0))
+                builder.shift_phase(-1.57, channel=DriveChannel(0))
                 # ECR
                 with builder.align_left():
-                    builder.play(GaussianSquare(800, 0.05, 64, 544), DriveChannel(1))
-                    builder.play(GaussianSquare(800, 0.22, 64, 544, 2), ControlChannel(0))
-                builder.play(Drag(160, 0.1, 40, 1.5), DriveChannel(0))
+                    builder.play(GaussianSquare(800, 0.05, 64, 544), channel=DriveChannel(1))
+                    builder.play(GaussianSquare(800, 0.22, 64, 544, 2), channel=ControlChannel(0))
+                builder.play(Drag(160, 0.1, 40, 1.5), channel=DriveChannel(0))
                 with builder.align_left():
-                    builder.play(GaussianSquare(800, -0.05, 64, 544), DriveChannel(1))
-                    builder.play(GaussianSquare(800, -0.22, 64, 544, 2), ControlChannel(0))
-                builder.play(Drag(160, 0.1, 40, 1.5), DriveChannel(0))
+                    builder.play(GaussianSquare(800, -0.05, 64, 544), channel=DriveChannel(1))
+                    builder.play(GaussianSquare(800, -0.22, 64, 544, 2), channel=ControlChannel(0))
+                builder.play(Drag(160, 0.1, 40, 1.5), channel=DriveChannel(0))
                 # Measure
                 with builder.align_left():
-                    builder.play(GaussianSquare(8000, 0.2, 64, 7744), MeasureChannel(0))
+                    builder.play(GaussianSquare(8000, 0.2, 64, 7744), channel=MeasureChannel(0))
                     builder.acquire(8000, AcquireChannel(0), MemorySlot(0))
 
         self.assert_roundtrip_equal(test_sched, True)
@@ -325,7 +325,7 @@ class TestPulseGate(QpyScheduleTestCase):
         mygate = Gate("mygate", 1, [])
 
         with builder.build() as caldef:
-            builder.play(Constant(100, 0.1), DriveChannel(0))
+            builder.play(Constant(100, 0.1), channel=DriveChannel(0))
 
         qc = QuantumCircuit(2)
         qc.append(mygate, [0])
@@ -338,7 +338,7 @@ class TestPulseGate(QpyScheduleTestCase):
         mygate = Gate("mygate", 2, [])
 
         with builder.build() as caldef:
-            builder.play(Constant(100, 0.1), ControlChannel(0))
+            builder.play(Constant(100, 0.1), channel=ControlChannel(0))
 
         qc = QuantumCircuit(2)
         qc.append(mygate, [0, 1])
@@ -353,7 +353,7 @@ class TestPulseGate(QpyScheduleTestCase):
         mygate = Gate("mygate", 2, [amp, angle])
 
         with builder.build() as caldef:
-            builder.play(Constant(100, amp * np.exp(1j * angle)), ControlChannel(0))
+            builder.play(Constant(100, amp * np.exp(1j * angle)), channel=ControlChannel(0))
 
         qc = QuantumCircuit(2)
         qc.append(mygate, [0, 1])
@@ -366,7 +366,7 @@ class TestPulseGate(QpyScheduleTestCase):
         amp = Parameter("amp")
 
         with builder.build() as caldef:
-            builder.play(Constant(100, amp), ControlChannel(0))
+            builder.play(Constant(100, amp), channel=ControlChannel(0))
 
         qc = QuantumCircuit(2)
         qc.rx(amp, 0)
@@ -381,10 +381,10 @@ class TestPulseGate(QpyScheduleTestCase):
         mygate = Gate("mygate", 1, [amp2])
 
         with builder.build() as caldef1:
-            builder.play(Constant(100, amp1), DriveChannel(0))
+            builder.play(Constant(100, amp1), channel=DriveChannel(0))
 
         with builder.build() as caldef2:
-            builder.play(Constant(100, amp2), DriveChannel(1))
+            builder.play(Constant(100, amp2), channel=DriveChannel(1))
 
         qc = QuantumCircuit(2)
         qc.rx(amp1, 0)
@@ -441,7 +441,7 @@ class TestSymengineLoadFromQPY(QiskitTestCase):
             name="pulse1",
         )
         with builder.build() as test_sched:
-            builder.play(my_pulse, DriveChannel(0))
+            builder.play(my_pulse, channel=DriveChannel(0))
 
         self.test_sched = test_sched
 

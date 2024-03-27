@@ -375,7 +375,7 @@ class TestPadDynamicalDecoupling(QiskitTestCase):
         # Change duration to 100 from the 50 in self.durations to make sure
         # gate duration is used correctly.
         with pulse.builder.build() as x_sched:
-            pulse.builder.delay(100, pulse.DriveChannel(0))
+            pulse.builder.delay(100, channel=pulse.DriveChannel(0))
 
         circ_in = self.ghz4.measure_all(inplace=False)
         circ_in.add_calibration(XGate(), (0,), x_sched)
@@ -433,7 +433,7 @@ class TestPadDynamicalDecoupling(QiskitTestCase):
         with pulse.builder.build() as sched:
             pulse.builder.play(
                 pulse.Gaussian(100, amp=amp, sigma=10.0),
-                pulse.DriveChannel(0),
+                channel=pulse.DriveChannel(0),
             )
 
         class Echo(Gate):
@@ -856,7 +856,9 @@ class TestPadDynamicalDecoupling(QiskitTestCase):
         rx_duration = int(param_value * 1000)
 
         with pulse.build() as rx:
-            pulse.play(pulse.Gaussian(rx_duration, 0.1, rx_duration // 4), pulse.DriveChannel(1))
+            pulse.play(
+                pulse.Gaussian(rx_duration, 0.1, rx_duration // 4), channel=pulse.DriveChannel(1)
+            )
 
         circ.add_calibration("rx", (1,), rx, params=[param_value])
 

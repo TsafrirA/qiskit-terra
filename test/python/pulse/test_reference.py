@@ -30,7 +30,7 @@ class TestReference(QiskitTestCase):
         These are directly exposed to the outer block.
         """
         with pulse.build() as sched_x1:
-            pulse.play(pulse.Constant(100, 0.1, name="x1"), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, 0.1, name="x1"), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_y1:
             builder.append_schedule(sched_x1)
@@ -47,7 +47,7 @@ class TestReference(QiskitTestCase):
         Nested reference is not directly exposed to the most outer block.
         """
         with pulse.build() as sched_x1:
-            pulse.play(pulse.Constant(100, 0.1, name="x1"), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, 0.1, name="x1"), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_y1:
             builder.reference("x1", "d0")
@@ -72,7 +72,7 @@ class TestReference(QiskitTestCase):
         param = circuit.Parameter("name")
 
         with pulse.build() as sched_x1:
-            pulse.play(pulse.Constant(100, param, name="x1"), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, param, name="x1"), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_y1:
             builder.reference("x1", "d0")
@@ -91,7 +91,7 @@ class TestReference(QiskitTestCase):
         param = circuit.Parameter("name")
 
         with pulse.build() as sched_x1:
-            pulse.play(pulse.Constant(100, param, name="x1"), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, param, name="x1"), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_y1:
             builder.reference("x1", "d0")
@@ -132,7 +132,7 @@ class TestReference(QiskitTestCase):
         Nested reference is not directly exposed to the most outer block.
         """
         with pulse.build() as sched_x1:
-            pulse.play(pulse.Constant(100, 0.1, name="x1"), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, 0.1, name="x1"), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_y1:
             builder.call(sched_x1, name="x1")
@@ -154,7 +154,7 @@ class TestReference(QiskitTestCase):
         param = circuit.Parameter("name")
 
         with pulse.build() as sched_x1:
-            pulse.play(pulse.Constant(100, param, name="x1"), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, param, name="x1"), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_y1:
             builder.call(sched_x1, name="x1")
@@ -172,7 +172,7 @@ class TestReference(QiskitTestCase):
         Original reference remains unchanged.
         """
         with pulse.build() as sched_x1:
-            pulse.play(pulse.Constant(100, 0.1, name="x1"), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, 0.1, name="x1"), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_y1:
             builder.call(sched_x1, name="x1")
@@ -203,10 +203,10 @@ class TestReference(QiskitTestCase):
         param2 = circuit.Parameter("param")
 
         with pulse.build() as sched_x1:
-            pulse.play(pulse.Constant(100, param1, name="p"), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, param1, name="p"), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_y1:
-            pulse.play(pulse.Constant(100, param2, name="p"), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, param2, name="p"), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_z1:
             pulse.call(sched_x1)
@@ -222,7 +222,7 @@ class TestReference(QiskitTestCase):
         param = circuit.Parameter("param")
 
         with pulse.build() as sched_x1:
-            pulse.play(pulse.Constant(100, param, name="x1"), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, param, name="x1"), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_z1:
             pulse.call(sched_x1, name="same_sched")
@@ -239,7 +239,7 @@ class TestReference(QiskitTestCase):
         param = circuit.Parameter("param")
 
         with pulse.build() as sched_x1:
-            pulse.play(pulse.Constant(100, param, name="x1"), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, param, name="x1"), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_z1:
             pulse.call(sched_x1, param=0.1)
@@ -256,7 +256,7 @@ class TestReference(QiskitTestCase):
         with pulse.build(name="x1") as sched_x1:
             with pulse.align_right():
                 with pulse.align_left():
-                    pulse.play(pulse.Constant(100, 0.1, name="x1"), pulse.DriveChannel(0))
+                    pulse.play(pulse.Constant(100, 0.1, name="x1"), channel=pulse.DriveChannel(0))
 
         self.assertEqual(len(sched_x1.references), 0)
 
@@ -271,10 +271,10 @@ class TestReference(QiskitTestCase):
         managed in the most outer block.
         """
         with pulse.build() as sched_x1:
-            pulse.play(pulse.Constant(100, 0.1, name="x1"), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, 0.1, name="x1"), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_y1:
-            pulse.play(pulse.Constant(100, 0.2, name="y1"), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, 0.2, name="y1"), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_x2:
             builder.call(sched_x1, name="x1")
@@ -313,10 +313,10 @@ class TestReference(QiskitTestCase):
         New block also contains reference, that should be passed to the current reference.
         """
         with pulse.build() as sched_x1:
-            pulse.play(pulse.Constant(100, 0.1, name="x1"), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, 0.1, name="x1"), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_y1:
-            pulse.play(pulse.Constant(100, 0.2, name="y1"), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, 0.2, name="y1"), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_x2:
             builder.call(sched_x1, name="x1")
@@ -333,7 +333,7 @@ class TestReference(QiskitTestCase):
 
         # Define schedule to replace
         with pulse.build() as sched_r1:
-            pulse.play(pulse.Constant(100, 0.1, name="r1"), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, 0.1, name="r1"), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_r2:
             pulse.call(sched_r1, name="r1")
@@ -348,10 +348,10 @@ class TestReference(QiskitTestCase):
         param = circuit.Parameter("name")
 
         with pulse.build() as sched_x1:
-            pulse.play(pulse.Constant(100, param), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, param), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_y1:
-            pulse.play(pulse.Constant(100, param), pulse.DriveChannel(1))
+            pulse.play(pulse.Constant(100, param), channel=pulse.DriveChannel(1))
 
         with pulse.build() as sched_z1:
             pulse.call(sched_x1, name="x1")
@@ -373,14 +373,14 @@ class TestReference(QiskitTestCase):
 
         with pulse.build() as sched1:
             with pulse.align_left():
-                pulse.delay(10, pulse.DriveChannel(0))
+                pulse.delay(10, channel=pulse.DriveChannel(0))
                 pulse.call(subroutine)  # This should be broadcasted to d1 as well
-                pulse.delay(10, pulse.DriveChannel(1))
+                pulse.delay(10, channel=pulse.DriveChannel(1))
 
         with pulse.build() as sched2:
             with pulse.align_left():
-                pulse.delay(10, pulse.DriveChannel(0))
-                pulse.delay(10, pulse.DriveChannel(1))
+                pulse.delay(10, channel=pulse.DriveChannel(0))
+                pulse.delay(10, channel=pulse.DriveChannel(1))
                 pulse.call(subroutine)
 
         self.assertNotEqual(sched1, sched2)
@@ -392,7 +392,7 @@ class TestReference(QiskitTestCase):
         This operation should fail because one of references will be gone after assignment.
         """
         with pulse.build() as sched_x1:
-            pulse.play(pulse.Constant(100, 0.1), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, 0.1), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_x2:
             pulse.call(sched_x1, name="conflict_name")
@@ -400,7 +400,7 @@ class TestReference(QiskitTestCase):
         self.assertEqual(sched_x2.references[("conflict_name",)], sched_x1)
 
         with pulse.build() as sched_y1:
-            pulse.play(pulse.Constant(100, 0.2), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, 0.2), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_y2:
             pulse.call(sched_y1, name="conflict_name")
@@ -418,10 +418,10 @@ class TestReference(QiskitTestCase):
         This operation should fail because overriding reference is not allowed.
         """
         with pulse.build() as sched_x1:
-            pulse.play(pulse.Constant(100, 0.1), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, 0.1), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_y1:
-            pulse.play(pulse.Constant(100, 0.2), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, 0.2), channel=pulse.DriveChannel(0))
 
         with pulse.build() as sched_z1:
             pulse.call(sched_x1, name="conflict_name")
@@ -549,7 +549,7 @@ class TestSubroutineWithCXGate(QiskitTestCase):
 
         # cnot gate, locally equivalent to ecr
         with pulse.build(name="cx", default_alignment="sequential") as cx_sched:
-            pulse.shift_phase(np.pi / 2, pulse.DriveChannel(self.control_ch))
+            pulse.shift_phase(np.pi / 2, channel=pulse.DriveChannel(self.control_ch))
             pulse.call(self.sx_sched, name="sx")
             pulse.call(ecr_sched, name="ecr")
 
@@ -575,7 +575,7 @@ class TestSubroutineWithCXGate(QiskitTestCase):
 
         with pulse.build(default_alignment="sequential") as ref_cx:
             # sz
-            pulse.shift_phase(np.pi / 2, pulse.DriveChannel(0))
+            pulse.shift_phase(np.pi / 2, channel=pulse.DriveChannel(0))
             with pulse.align_left():
                 # sx
                 pulse.play(

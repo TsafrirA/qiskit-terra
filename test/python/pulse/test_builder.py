@@ -50,7 +50,7 @@ class TestBuilderBase(TestBuilder):
         d0 = pulse.DriveChannel(0)
         with pulse.build(name="reference") as reference:
             with pulse.align_sequential():
-                pulse.delay(10, d0)
+                pulse.delay(10, channel=d0)
 
         with pulse.build(schedule=reference) as schedule:
             pass
@@ -64,13 +64,13 @@ class TestBuilderBase(TestBuilder):
         d1 = pulse.DriveChannel(0)
 
         with pulse.build(default_alignment="left") as schedule:
-            pulse.delay(10, d0)
-            pulse.delay(20, d1)
+            pulse.delay(10, channel=d0)
+            pulse.delay(20, channel=d1)
 
         with pulse.build(self.backend) as reference:
             with pulse.align_left():
-                pulse.delay(10, d0)
-                pulse.delay(20, d1)
+                pulse.delay(10, channel=d0)
+                pulse.delay(20, channel=d1)
 
         self.assertScheduleEqual(schedule, reference)
 
@@ -80,13 +80,13 @@ class TestBuilderBase(TestBuilder):
         d1 = pulse.DriveChannel(0)
 
         with pulse.build(default_alignment="right") as schedule:
-            pulse.delay(10, d0)
-            pulse.delay(20, d1)
+            pulse.delay(10, channel=d0)
+            pulse.delay(20, channel=d1)
 
         with pulse.build() as reference:
             with pulse.align_right():
-                pulse.delay(10, d0)
-                pulse.delay(20, d1)
+                pulse.delay(10, channel=d0)
+                pulse.delay(20, channel=d1)
 
         self.assertScheduleEqual(schedule, reference)
 
@@ -96,13 +96,13 @@ class TestBuilderBase(TestBuilder):
         d1 = pulse.DriveChannel(0)
 
         with pulse.build(default_alignment="sequential") as schedule:
-            pulse.delay(10, d0)
-            pulse.delay(20, d1)
+            pulse.delay(10, channel=d0)
+            pulse.delay(20, channel=d1)
 
         with pulse.build() as reference:
             with pulse.align_sequential():
-                pulse.delay(10, d0)
-                pulse.delay(20, d1)
+                pulse.delay(10, channel=d0)
+                pulse.delay(20, channel=d1)
 
         self.assertScheduleEqual(schedule, reference)
 
@@ -117,9 +117,9 @@ class TestContexts(TestBuilder):
 
         with pulse.build() as schedule:
             with pulse.align_sequential():
-                pulse.delay(3, d0)
-                pulse.delay(5, d1)
-                pulse.delay(7, d0)
+                pulse.delay(3, channel=d0)
+                pulse.delay(5, channel=d1)
+                pulse.delay(7, channel=d0)
 
         reference = pulse.Schedule()
         # d0
@@ -138,11 +138,11 @@ class TestContexts(TestBuilder):
 
         with pulse.build() as schedule:
             with pulse.align_left():
-                pulse.delay(11, d2)
-                pulse.delay(3, d0)
+                pulse.delay(11, channel=d2)
+                pulse.delay(3, channel=d0)
                 with pulse.align_left():
-                    pulse.delay(5, d1)
-                    pulse.delay(7, d0)
+                    pulse.delay(5, channel=d1)
+                    pulse.delay(7, channel=d0)
 
         reference = pulse.Schedule()
         # d0
@@ -164,10 +164,10 @@ class TestContexts(TestBuilder):
         with pulse.build() as schedule:
             with pulse.align_right():
                 with pulse.align_right():
-                    pulse.delay(11, d2)
-                    pulse.delay(3, d0)
-                pulse.delay(13, d0)
-                pulse.delay(5, d1)
+                    pulse.delay(11, channel=d2)
+                    pulse.delay(3, channel=d0)
+                pulse.delay(13, channel=d0)
+                pulse.delay(5, channel=d1)
 
         reference = pulse.Schedule()
         # d0
@@ -186,7 +186,7 @@ class TestContexts(TestBuilder):
 
         with pulse.build() as schedule:
             with pulse.phase_offset(3.14, d0):
-                pulse.delay(10, d0)
+                pulse.delay(10, channel=d0)
 
         reference = pulse.Schedule()
         reference += instructions.ShiftPhase(3.14, channel=d0)
@@ -201,7 +201,7 @@ class TestContexts(TestBuilder):
 
         with pulse.build() as schedule:
             with pulse.frequency_offset(1e9, d0):
-                pulse.delay(10, d0)
+                pulse.delay(10, channel=d0)
 
         reference = pulse.Schedule()
         reference += instructions.ShiftFrequency(1e9, channel=d0)
@@ -217,7 +217,7 @@ class TestContexts(TestBuilder):
 
         with pulse.build(self.backend) as schedule:
             with pulse.frequency_offset(1e9, d0, compensate_phase=True):
-                pulse.delay(10, d0)
+                pulse.delay(10, channel=d0)
 
         reference = pulse.Schedule()
         reference += instructions.ShiftFrequency(1e9, channel=d0)
@@ -262,7 +262,7 @@ class TestInstructions(TestBuilder):
         d0 = pulse.DriveChannel(0)
 
         with pulse.build() as schedule:
-            pulse.delay(10, d0)
+            pulse.delay(10, channel=d0)
 
         reference = pulse.Schedule()
         reference += instructions.Delay(10, channel=d0)
@@ -275,7 +275,7 @@ class TestInstructions(TestBuilder):
         test_pulse = library.Constant(10, 1.0)
 
         with pulse.build() as schedule:
-            pulse.play(test_pulse, d0)
+            pulse.play(test_pulse, channel=d0)
 
         reference = pulse.Schedule()
         reference += instructions.Play(test_pulse, channel=d0)
@@ -288,7 +288,7 @@ class TestInstructions(TestBuilder):
         test_pulse = library.Waveform([0.0, 0.0])
 
         with pulse.build() as schedule:
-            pulse.play(test_pulse, d0)
+            pulse.play(test_pulse, channel=d0)
 
         reference = pulse.Schedule()
         reference += instructions.Play(test_pulse, channel=d0)
@@ -301,7 +301,7 @@ class TestInstructions(TestBuilder):
         test_array = np.array([0.0, 0.0], dtype=np.complex128)
 
         with pulse.build() as schedule:
-            pulse.play(test_array, d0)
+            pulse.play(test_array, channel=d0)
 
         reference = pulse.Schedule()
         test_pulse = pulse.Waveform(test_array)
@@ -370,7 +370,7 @@ class TestInstructions(TestBuilder):
             pulse.shift_phase,
         ]:
             with pulse.build() as schedule:
-                instruction_method(0, d0, name="instruction_name")
+                instruction_method(0, channel=d0, name="instruction_name")
             self.assertEqual(schedule.instructions[0][1].name, "instruction_name")
 
     def test_set_frequency(self):
@@ -378,7 +378,7 @@ class TestInstructions(TestBuilder):
         d0 = pulse.DriveChannel(0)
 
         with pulse.build() as schedule:
-            pulse.set_frequency(1e9, d0)
+            pulse.set_frequency(1e9, channel=d0)
 
         reference = pulse.Schedule()
         reference += instructions.SetFrequency(1e9, channel=d0)
@@ -390,7 +390,7 @@ class TestInstructions(TestBuilder):
         d0 = pulse.DriveChannel(0)
 
         with pulse.build() as schedule:
-            pulse.shift_frequency(0.1e9, d0)
+            pulse.shift_frequency(0.1e9, channel=d0)
 
         reference = pulse.Schedule()
         reference += instructions.ShiftFrequency(0.1e9, channel=d0)
@@ -402,7 +402,7 @@ class TestInstructions(TestBuilder):
         d0 = pulse.DriveChannel(0)
 
         with pulse.build() as schedule:
-            pulse.set_phase(3.14, d0)
+            pulse.set_phase(3.14, channel=d0)
 
         reference = pulse.Schedule()
         reference += instructions.SetPhase(3.14, channel=d0)
@@ -414,7 +414,7 @@ class TestInstructions(TestBuilder):
         d0 = pulse.DriveChannel(0)
 
         with pulse.build() as schedule:
-            pulse.shift_phase(3.14, d0)
+            pulse.shift_phase(3.14, channel=d0)
 
         reference = pulse.Schedule()
         reference += instructions.ShiftPhase(3.14, channel=d0)
@@ -443,12 +443,12 @@ class TestDirectives(TestBuilder):
 
         with pulse.build() as schedule:
             with pulse.align_right():
-                pulse.delay(3, d0)
+                pulse.delay(3, channel=d0)
                 pulse.barrier(d0, d1, d2)
-                pulse.delay(11, d2)
+                pulse.delay(11, channel=d2)
                 with pulse.align_right():
-                    pulse.delay(5, d1)
-                    pulse.delay(7, d0)
+                    pulse.delay(5, channel=d1)
+                    pulse.delay(7, channel=d0)
 
         reference = pulse.Schedule()
         # d0
@@ -469,12 +469,12 @@ class TestDirectives(TestBuilder):
 
         with pulse.build() as schedule:
             with pulse.align_left():
-                pulse.delay(3, d0)
+                pulse.delay(3, channel=d0)
                 pulse.barrier(d0, d1, d2)
-                pulse.delay(11, d2)
+                pulse.delay(11, channel=d2)
                 with pulse.align_left():
-                    pulse.delay(5, d1)
-                    pulse.delay(7, d0)
+                    pulse.delay(5, channel=d1)
+                    pulse.delay(7, channel=d0)
 
         reference = pulse.Schedule()
         # d0
@@ -610,12 +610,12 @@ class TestMacros(TestBuilder):
 
         @pulse.macro
         def nested(a):
-            pulse.play(pulse.Gaussian(100, a, 20), pulse.drive_channel(0))
+            pulse.play(pulse.Gaussian(100, a, 20), channel=pulse.drive_channel(0))
             return a * 2
 
         @pulse.macro
         def test():
-            pulse.play(pulse.Constant(100, 1.0), pulse.drive_channel(0))
+            pulse.play(pulse.Constant(100, 1.0), channel=pulse.drive_channel(0))
             output = nested(0.5)
             return output
 
@@ -744,12 +744,12 @@ class TestBuilderComposition(TestBuilder):
 
         with pulse.build(self.backend) as schedule:
             with pulse.align_sequential():
-                pulse.delay(delay_dur, d0)
+                pulse.delay(delay_dur, channel=d0)
                 pulse.call(get_sched([1], self.backend))
 
             with pulse.align_right():
-                pulse.play(library.Constant(short_dur, 0.1), d1)
-                pulse.play(library.Constant(long_dur, 0.1), d2)
+                pulse.play(library.Constant(short_dur, 0.1), channel=d1)
+                pulse.play(library.Constant(long_dur, 0.1), channel=d2)
                 pulse.call(get_sched([1], self.backend))
 
             with pulse.align_left():
@@ -842,7 +842,7 @@ class TestSubroutineCall(TestBuilder):
 
         with pulse.build() as target:
             with pulse.align_right():
-                pulse.delay(10, d1)
+                pulse.delay(10, channel=d1)
                 pulse.call(subprogram)
 
         reference = pulse.Schedule()
@@ -857,7 +857,7 @@ class TestSubroutineCall(TestBuilder):
         from copy import deepcopy
 
         with pulse.build() as subroutine:
-            pulse.delay(10, pulse.DriveChannel(0))
+            pulse.delay(10, channel=pulse.DriveChannel(0))
 
         with pulse.build() as main_prog:
             pulse.call(subroutine)
@@ -874,7 +874,7 @@ class TestSubroutineCall(TestBuilder):
         amp = circuit.Parameter("amp")
 
         with pulse.build() as subroutine:
-            pulse.play(pulse.Gaussian(160, amp, 40), pulse.DriveChannel(0))
+            pulse.play(pulse.Gaussian(160, amp, 40), channel=pulse.DriveChannel(0))
 
         with pulse.build() as main_prog:
             pulse.call(subroutine, amp=0.1)
@@ -895,7 +895,7 @@ class TestSubroutineCall(TestBuilder):
         amp = circuit.Parameter("amp")
 
         with pulse.build() as subroutine:
-            pulse.play(pulse.Gaussian(160, amp, 40), pulse.DriveChannel(0))
+            pulse.play(pulse.Gaussian(160, amp, 40), channel=pulse.DriveChannel(0))
 
         with pulse.build() as main_prog:
             pulse.call(subroutine, amp=0.1)
@@ -919,7 +919,7 @@ class TestSubroutineCall(TestBuilder):
         amp = circuit.Parameter("amp1")
 
         with pulse.build() as subroutine:
-            pulse.play(pulse.Gaussian(160, amp, 40), pulse.DriveChannel(0))
+            pulse.play(pulse.Gaussian(160, amp, 40), channel=pulse.DriveChannel(0))
 
         with self.assertRaises(exceptions.PulseError):
             with pulse.build():
@@ -930,8 +930,8 @@ class TestSubroutineCall(TestBuilder):
         amp = circuit.Parameter("amp")
 
         with pulse.build() as subroutine:
-            pulse.play(pulse.Gaussian(160, amp, 40), pulse.DriveChannel(0))
-            pulse.play(pulse.Gaussian(320, amp, 80), pulse.DriveChannel(0))
+            pulse.play(pulse.Gaussian(160, amp, 40), channel=pulse.DriveChannel(0))
+            pulse.play(pulse.Gaussian(320, amp, 80), channel=pulse.DriveChannel(0))
 
         with pulse.build() as main_prog:
             pulse.call(subroutine, amp=0.1)
@@ -951,8 +951,8 @@ class TestSubroutineCall(TestBuilder):
         sigma = circuit.Parameter("sigma")
 
         with pulse.build() as subroutine:
-            pulse.play(pulse.Gaussian(160, amp1, sigma), pulse.DriveChannel(0))
-            pulse.play(pulse.Gaussian(160, amp2, sigma), pulse.DriveChannel(0))
+            pulse.play(pulse.Gaussian(160, amp1, sigma), channel=pulse.DriveChannel(0))
+            pulse.play(pulse.Gaussian(160, amp2, sigma), channel=pulse.DriveChannel(0))
 
         with pulse.build() as main_prog:
             pulse.call(subroutine, value_dict={amp1: 0.1, amp2: 0.2}, sigma=40)
@@ -972,8 +972,8 @@ class TestSubroutineCall(TestBuilder):
         dur = circuit.Parameter("dur")
 
         with pulse.build() as subroutine:
-            pulse.play(pulse.Constant(dur, 0.1), pulse.DriveChannel(0))
-            pulse.play(pulse.Constant(dur, 0.2), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(dur, 0.1), channel=pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(dur, 0.2), channel=pulse.DriveChannel(0))
 
         with pulse.build() as main:
             pulse.call(subroutine)

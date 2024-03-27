@@ -322,10 +322,10 @@ class TestQuantumCircuitDisassembler(QiskitTestCase):
         qc = qc.assign_parameters({theta: np.pi})
 
         with pulse.build() as h_sched:
-            pulse.play(pulse.library.Drag(1, 0.15, 4, 2), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Drag(1, 0.15, 4, 2), channel=pulse.DriveChannel(0))
 
         with pulse.build() as x180:
-            pulse.play(pulse.library.Gaussian(1, 0.2, 5), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Gaussian(1, 0.2, 5), channel=pulse.DriveChannel(0))
 
         qc.add_calibration("h", [0], h_sched)
         qc.add_calibration(RXGate(np.pi), [0], x180)
@@ -338,7 +338,7 @@ class TestQuantumCircuitDisassembler(QiskitTestCase):
     def test_parametric_pulse_circuit_calibrations(self):
         """Test that disassembler parses parametric pulses back to pulse gates."""
         with pulse.build() as h_sched:
-            pulse.play(pulse.library.Drag(50, 0.15, 4, 2), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Drag(50, 0.15, 4, 2), channel=pulse.DriveChannel(0))
 
         qc = QuantumCircuit(2)
         qc.h(0)
@@ -365,7 +365,7 @@ class TestQuantumCircuitDisassembler(QiskitTestCase):
     def test_multi_circuit_uncommon_calibrations(self):
         """Test that disassembler parses uncommon calibrations (stored at QOBJ experiment-level)."""
         with pulse.build() as sched:
-            pulse.play(pulse.library.Drag(50, 0.15, 4, 2), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Drag(50, 0.15, 4, 2), channel=pulse.DriveChannel(0))
 
         qc_0 = QuantumCircuit(2)
         qc_0.h(0)
@@ -385,7 +385,7 @@ class TestQuantumCircuitDisassembler(QiskitTestCase):
     def test_multi_circuit_common_calibrations(self):
         """Test that disassembler parses common calibrations (stored at QOBJ-level)."""
         with pulse.build() as sched:
-            pulse.play(pulse.library.Drag(1, 0.15, 4, 2), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Drag(1, 0.15, 4, 2), channel=pulse.DriveChannel(0))
 
         qc_0 = QuantumCircuit(2)
         qc_0.h(0)
@@ -446,14 +446,14 @@ class TestPulseScheduleDisassembler(QiskitTestCase):
         d1 = pulse.DriveChannel(1)
         with pulse.build(self.backend) as sched:
             with pulse.align_right():
-                pulse.play(pulse.library.Constant(10, 1.0), d0)
-                pulse.set_phase(1.0, d0)
-                pulse.shift_phase(3.11, d0)
-                pulse.set_frequency(1e9, d0)
-                pulse.shift_frequency(1e7, d0)
-                pulse.delay(20, d0)
-                pulse.delay(10, d1)
-                pulse.play(pulse.library.Constant(8, 0.1), d1)
+                pulse.play(pulse.library.Constant(10, 1.0), channel=d0)
+                pulse.set_phase(1.0, channel=d0)
+                pulse.shift_phase(3.11, channel=d0)
+                pulse.set_frequency(1e9, channel=d0)
+                pulse.shift_frequency(1e7, channel=d0)
+                pulse.delay(20, channel=d0)
+                pulse.delay(10, channel=d1)
+                pulse.play(pulse.library.Constant(8, 0.1), channel=d1)
                 pulse.measure_all()
 
         qobj = assemble(sched, backend=self.backend, shots=2000)
@@ -475,27 +475,27 @@ class TestPulseScheduleDisassembler(QiskitTestCase):
         d1 = pulse.DriveChannel(1)
         with pulse.build(self.backend) as sched0:
             with pulse.align_right():
-                pulse.play(pulse.library.Constant(10, 1.0), d0)
-                pulse.set_phase(1.0, d0)
-                pulse.shift_phase(3.11, d0)
-                pulse.set_frequency(1e9, d0)
-                pulse.shift_frequency(1e7, d0)
-                pulse.delay(20, d0)
-                pulse.delay(10, d1)
-                pulse.play(pulse.library.Constant(8, 0.1), d1)
+                pulse.play(pulse.library.Constant(10, 1.0), channel=d0)
+                pulse.set_phase(1.0, channel=d0)
+                pulse.shift_phase(3.11, channel=d0)
+                pulse.set_frequency(1e9, channel=d0)
+                pulse.shift_frequency(1e7, channel=d0)
+                pulse.delay(20, channel=d0)
+                pulse.delay(10, channel=d1)
+                pulse.play(pulse.library.Constant(8, 0.1), channel=d1)
                 pulse.measure_all()
 
         with pulse.build(self.backend) as sched1:
             with pulse.align_right():
-                pulse.play(pulse.library.Constant(8, 0.1), d0)
-                pulse.play(pulse.library.Waveform([0.0, 1.0]), d1)
-                pulse.set_phase(1.1, d0)
-                pulse.shift_phase(3.5, d0)
-                pulse.set_frequency(2e9, d0)
-                pulse.shift_frequency(3e7, d1)
-                pulse.delay(20, d1)
-                pulse.delay(10, d0)
-                pulse.play(pulse.library.Constant(8, 0.4), d1)
+                pulse.play(pulse.library.Constant(8, 0.1), channel=d0)
+                pulse.play(pulse.library.Waveform([0.0, 1.0]), channel=d1)
+                pulse.set_phase(1.1, channel=d0)
+                pulse.shift_phase(3.5, channel=d0)
+                pulse.set_frequency(2e9, channel=d0)
+                pulse.shift_frequency(3e7, channel=d1)
+                pulse.delay(20, channel=d1)
+                pulse.delay(10, channel=d0)
+                pulse.play(pulse.library.Constant(8, 0.4), channel=d1)
                 pulse.measure_all()
 
         qobj = assemble([sched0, sched1], backend=self.backend, shots=2000)
@@ -513,10 +513,10 @@ class TestPulseScheduleDisassembler(QiskitTestCase):
         d0 = pulse.DriveChannel(0)
         with pulse.build(self.backend) as sched:
             with pulse.align_right():
-                pulse.play(pulse.library.Constant(10, 1.0), d0)
-                pulse.play(pulse.library.Gaussian(10, 1.0, 2.0), d0)
-                pulse.play(pulse.library.GaussianSquare(10, 1.0, 2.0, 3), d0)
-                pulse.play(pulse.library.Drag(10, 1.0, 2.0, 0.1), d0)
+                pulse.play(pulse.library.Constant(10, 1.0), channel=d0)
+                pulse.play(pulse.library.Gaussian(10, 1.0, 2.0), channel=d0)
+                pulse.play(pulse.library.GaussianSquare(10, 1.0, 2.0, 3), channel=d0)
+                pulse.play(pulse.library.Drag(10, 1.0, 2.0, 0.1), channel=d0)
 
         qobj = assemble(sched, backend=self.backend, shots=2000)
         scheds, _, _ = disassemble(qobj)

@@ -481,7 +481,7 @@ class TestBasicSchedule(QiskitTestCase):
         qc = QuantumCircuit(2)
         qc.append(Gate("pulse_gate", 1, [x]), [0])
         with build() as expected_schedule:
-            play(Gaussian(duration=160, amp=x, sigma=40), DriveChannel(0))
+            play(Gaussian(duration=160, amp=x, sigma=40), channel=DriveChannel(0))
         qc.add_calibration(gate="pulse_gate", qubits=[0], schedule=expected_schedule, params=[x])
         sched = schedule(qc, self.backend)
         self.assertEqual(sched, transforms.target_qobj_transform(expected_schedule))
@@ -491,7 +491,7 @@ class TestBasicSchedule(QiskitTestCase):
         duration = Parameter("duration")
 
         with build() as pulse_prog:
-            play(Gaussian(duration, 0.1, 10), DriveChannel(0))
+            play(Gaussian(duration, 0.1, 10), channel=DriveChannel(0))
 
         instmap = InstructionScheduleMap()
         instmap.add("block_gate", (0,), pulse_prog, ["duration"])
@@ -1063,7 +1063,7 @@ class TestBasicScheduleV2(QiskitTestCase):
         qc = QuantumCircuit(2)
         qc.append(Gate("pulse_gate", 1, [x]), [0])
         with build() as expected_schedule:
-            play(Gaussian(duration=160, amp=x, sigma=40), DriveChannel(0))
+            play(Gaussian(duration=160, amp=x, sigma=40), channel=DriveChannel(0))
         qc.add_calibration(gate="pulse_gate", qubits=[0], schedule=expected_schedule, params=[x])
         sched = schedule(qc, self.backend)
         self.assertEqual(sched, transforms.target_qobj_transform(expected_schedule))
@@ -1073,7 +1073,7 @@ class TestBasicScheduleV2(QiskitTestCase):
         duration = Parameter("duration")
 
         with build() as pulse_prog:
-            play(Gaussian(duration, 0.1, 10), DriveChannel(0))
+            play(Gaussian(duration, 0.1, 10), channel=DriveChannel(0))
 
         instmap = InstructionScheduleMap()
         instmap.add("block_gate", (0,), pulse_prog, ["duration"])

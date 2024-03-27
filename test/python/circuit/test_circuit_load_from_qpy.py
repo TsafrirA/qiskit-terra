@@ -319,7 +319,7 @@ class TestLoadFromQPY(QiskitTestCase):
         amp = Parameter("amp")
 
         with pulse.builder.build() as sched:
-            pulse.builder.play(pulse.Constant(100, amp), pulse.DriveChannel(0))
+            pulse.builder.play(pulse.Constant(100, amp), channel=pulse.DriveChannel(0))
 
         gate = Gate("custom", 1, [amp])
 

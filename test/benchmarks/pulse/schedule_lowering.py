@@ -29,37 +29,37 @@ def build_complicated_schedule():
                         for _ in range(5):
                             builder.play(
                                 library.GaussianSquare(640, 0.1, 64, 384),
-                                channels.ControlChannel(2),
+                                channel=channels.ControlChannel(2),
                             )
                 builder.play(
                     library.Constant(1920, 0.1),
-                    channels.DriveChannel(1),
+                    channel=channels.DriveChannel(1),
                 )
                 builder.barrier(
                     channels.DriveChannel(0),
                     channels.DriveChannel(1),
                     channels.DriveChannel(2),
                 )
-                builder.delay(800, channels.DriveChannel(1))
+                builder.delay(800, channel=channels.DriveChannel(1))
                 with builder.align_left():
                     builder.play(
                         library.Drag(160, 0.3, 40, 1.5),
-                        channels.DriveChannel(0),
+                        channel=channels.DriveChannel(0),
                     )
                     builder.play(
                         library.Drag(320, 0.2, 80, 1.5),
-                        channels.DriveChannel(1),
+                        channel=channels.DriveChannel(1),
                     )
                     builder.play(
                         library.Drag(480, 0.1, 120, 1.5),
-                        channels.DriveChannel(2),
+                        channel=channels.DriveChannel(2),
                     )
             builder.reference("sub")
             with builder.align_left():
                 for i in range(3):
                     builder.play(
                         library.GaussianSquare(1600, 0.1, 64, 1344),
-                        channels.MeasureChannel(i),
+                        channel=channels.MeasureChannel(i),
                     )
                     builder.acquire(
                         1600,
@@ -70,7 +70,7 @@ def build_complicated_schedule():
     with builder.build() as subroutine:
         for i in range(3):
             samples = np.random.random(160)
-            builder.play(samples, channels.DriveChannel(i))
+            builder.play(samples, channel=channels.DriveChannel(i))
     schedule.assign_references({("sub",): subroutine}, inplace=True)
 
     return schedule

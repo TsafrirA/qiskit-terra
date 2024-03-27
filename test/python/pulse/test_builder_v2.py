@@ -54,7 +54,7 @@ class TestContextsV2(TestBuilderV2):
         d0 = pulse.DriveChannel(0)
         with pulse.build(self.backend) as schedule:
             with pulse.frequency_offset(1e9, d0, compensate_phase=True):
-                pulse.delay(10, d0)
+                pulse.delay(10, channel=d0)
 
         reference = pulse.Schedule()
         reference += instructions.ShiftFrequency(1e9, channel=d0)
@@ -197,12 +197,12 @@ class TestMacrosV2(TestBuilderV2):
 
         @pulse.macro
         def nested(a):
-            pulse.play(pulse.Gaussian(100, a, 20), pulse.drive_channel(0))
+            pulse.play(pulse.Gaussian(100, a, 20), channel=pulse.drive_channel(0))
             return a * 2
 
         @pulse.macro
         def test():
-            pulse.play(pulse.Constant(100, 1.0), pulse.drive_channel(0))
+            pulse.play(pulse.Constant(100, 1.0), channel=pulse.drive_channel(0))
             output = nested(0.5)
             return output
 

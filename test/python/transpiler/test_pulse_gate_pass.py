@@ -32,25 +32,25 @@ class TestPulseGate(QiskitTestCase):
         self.sched_param = circuit.Parameter("P0")
 
         with pulse.build(name="sx_q0") as custom_sx_q0:
-            pulse.play(pulse.Constant(100, 0.1), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, 0.1), channel=pulse.DriveChannel(0))
         self.custom_sx_q0 = custom_sx_q0
 
         with pulse.build(name="sx_q1") as custom_sx_q1:
-            pulse.play(pulse.Constant(100, 0.2), pulse.DriveChannel(1))
+            pulse.play(pulse.Constant(100, 0.2), channel=pulse.DriveChannel(1))
         self.custom_sx_q1 = custom_sx_q1
 
         with pulse.build(name="cx_q01") as custom_cx_q01:
-            pulse.play(pulse.Constant(100, 0.4), pulse.ControlChannel(0))
+            pulse.play(pulse.Constant(100, 0.4), channel=pulse.ControlChannel(0))
         self.custom_cx_q01 = custom_cx_q01
 
         with pulse.build(name="my_gate_q0") as my_gate_q0:
-            pulse.shift_phase(self.sched_param, pulse.DriveChannel(0))
-            pulse.play(pulse.Constant(120, 0.1), pulse.DriveChannel(0))
+            pulse.shift_phase(self.sched_param, channel=pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(120, 0.1), channel=pulse.DriveChannel(0))
         self.my_gate_q0 = my_gate_q0
 
         with pulse.build(name="my_gate_q1") as my_gate_q1:
-            pulse.shift_phase(self.sched_param, pulse.DriveChannel(1))
-            pulse.play(pulse.Constant(120, 0.2), pulse.DriveChannel(1))
+            pulse.shift_phase(self.sched_param, channel=pulse.DriveChannel(1))
+            pulse.play(pulse.Constant(120, 0.2), channel=pulse.DriveChannel(1))
         self.my_gate_q1 = my_gate_q1
 
     def test_transpile_with_bare_backend(self):
@@ -396,7 +396,7 @@ class TestPulseGate(QiskitTestCase):
         Test case from Qiskit/qiskit-terra/#9489
         """
         with pulse.build(name="custom") as rabi12:
-            pulse.play(pulse.Constant(100, 0.4), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, 0.4), channel=pulse.DriveChannel(0))
 
         instmap = Fake27QPulseV1().defaults().instruction_schedule_map
         instmap.add("rabi12", (0,), rabi12)

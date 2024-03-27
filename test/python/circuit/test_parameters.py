@@ -694,9 +694,9 @@ class TestParameters(QiskitTestCase):
         phi = Parameter("ϕ")
 
         with pulse.build() as my_cal:
-            pulse.set_frequency(alpha + beta, pulse.DriveChannel(0))
-            pulse.shift_frequency(gamma + beta, pulse.DriveChannel(0))
-            pulse.set_phase(phi, pulse.DriveChannel(1))
+            pulse.set_frequency(alpha + beta, channel=pulse.DriveChannel(0))
+            pulse.shift_frequency(gamma + beta, channel=pulse.DriveChannel(0))
+            pulse.set_phase(phi, channel=pulse.DriveChannel(1))
 
         circ = QuantumCircuit(2, 2)
         circ.append(Gate("custom", 2, [alpha, beta, gamma, phi]), [0, 1])

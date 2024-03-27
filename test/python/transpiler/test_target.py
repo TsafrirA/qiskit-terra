@@ -1174,9 +1174,9 @@ class TestPulseTarget(QiskitTestCase):
             dt=3e-7, granularity=2, min_length=4, pulse_alignment=8, acquire_alignment=8
         )
         with pulse.build(name="sx_q0") as self.custom_sx_q0:
-            pulse.play(pulse.Constant(100, 0.1), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(100, 0.1), channel=pulse.DriveChannel(0))
         with pulse.build(name="sx_q1") as self.custom_sx_q1:
-            pulse.play(pulse.Constant(100, 0.2), pulse.DriveChannel(1))
+            pulse.play(pulse.Constant(100, 0.2), channel=pulse.DriveChannel(1))
         sx_props = {
             (0,): InstructionProperties(
                 duration=35.5e-9, error=0.000413, calibration=self.custom_sx_q0
@@ -1242,7 +1242,7 @@ Instructions:
         duration = Parameter("duration")
 
         with pulse.build(name="sx_q0") as custom_sx:
-            pulse.play(pulse.Constant(duration, 0.2), pulse.DriveChannel(0))
+            pulse.play(pulse.Constant(duration, 0.2), channel=pulse.DriveChannel(0))
 
         inst_map.add("sx", 0, custom_sx, ["duration"])
 
@@ -1254,7 +1254,7 @@ Instructions:
         self.pulse_target.dt = None
         inst_map = InstructionScheduleMap()
         with pulse.build(name="sx_q1") as custom_sx:
-            pulse.play(pulse.Constant(1000, 0.2), pulse.DriveChannel(1))
+            pulse.play(pulse.Constant(1000, 0.2), channel=pulse.DriveChannel(1))
 
         inst_map.add("sx", 0, self.custom_sx_q0)
         inst_map.add("sx", 1, custom_sx)
@@ -1287,7 +1287,7 @@ Instructions:
     def test_update_from_instruction_schedule_map_with_dt_set(self):
         inst_map = InstructionScheduleMap()
         with pulse.build(name="sx_q1") as custom_sx:
-            pulse.play(pulse.Constant(1000, 0.2), pulse.DriveChannel(1))
+            pulse.play(pulse.Constant(1000, 0.2), channel=pulse.DriveChannel(1))
 
         inst_map.add("sx", 0, self.custom_sx_q0)
         inst_map.add("sx", 1, custom_sx)
@@ -1305,7 +1305,7 @@ Instructions:
     def test_update_from_instruction_schedule_map_with_error_dict(self):
         inst_map = InstructionScheduleMap()
         with pulse.build(name="sx_q1") as custom_sx:
-            pulse.play(pulse.Constant(1000, 0.2), pulse.DriveChannel(1))
+            pulse.play(pulse.Constant(1000, 0.2), channel=pulse.DriveChannel(1))
 
         inst_map.add("sx", 0, self.custom_sx_q0)
         inst_map.add("sx", 1, custom_sx)

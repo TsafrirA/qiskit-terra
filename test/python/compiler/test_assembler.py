@@ -509,10 +509,10 @@ class TestCircuitAssembler(QiskitTestCase):
         circ = circ.assign_parameters({theta: 3.14})
 
         with pulse.build() as custom_h_schedule:
-            pulse.play(pulse.library.Drag(50, 0.15, 4, 2), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Drag(50, 0.15, 4, 2), channel=pulse.DriveChannel(0))
 
         with pulse.build() as x180:
-            pulse.play(pulse.library.Gaussian(50, 0.2, 5), pulse.DriveChannel(1))
+            pulse.play(pulse.library.Gaussian(50, 0.2, 5), channel=pulse.DriveChannel(1))
 
         circ.add_calibration("h", [0], custom_h_schedule)
         circ.add_calibration(RxGate(3.14), [0], x180)
@@ -533,7 +533,7 @@ class TestCircuitAssembler(QiskitTestCase):
         parametric pulses.
         """
         with pulse.build() as custom_h_schedule:
-            pulse.play(pulse.library.Drag(50, 0.15, 4, 2), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Drag(50, 0.15, 4, 2), channel=pulse.DriveChannel(0))
 
         circ = QuantumCircuit(2)
         circ.h(0)
@@ -548,7 +548,7 @@ class TestCircuitAssembler(QiskitTestCase):
     def test_pulse_gates_multiple_circuits(self):
         """Test one circuit with cals and another without."""
         with pulse.build() as dummy_sched:
-            pulse.play(pulse.library.Drag(50, 0.15, 4, 2), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Drag(50, 0.15, 4, 2), channel=pulse.DriveChannel(0))
 
         circ = QuantumCircuit(2)
         circ.h(0)
@@ -568,7 +568,7 @@ class TestCircuitAssembler(QiskitTestCase):
     def test_pulse_gates_common_cals(self):
         """Test that common calibrations are added at the top level."""
         with pulse.build() as dummy_sched:
-            pulse.play(pulse.library.Drag(50, 0.15, 4, 2), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Drag(50, 0.15, 4, 2), channel=pulse.DriveChannel(0))
 
         circ = QuantumCircuit(2)
         circ.h(0)
@@ -1371,7 +1371,9 @@ class TestPulseAssembler(QiskitTestCase):
         qc.x(0)
         qc.measure(0, 0)
         with pulse.build(backend, name="x") as x_q0:
-            pulse.play(pulse.Gaussian(duration=128, amp=0.1, sigma=16), pulse.drive_channel(0))
+            pulse.play(
+                pulse.Gaussian(duration=128, amp=0.1, sigma=16), channel=pulse.drive_channel(0)
+            )
 
         qc.add_calibration("x", (0,), x_q0)
 
@@ -1386,7 +1388,9 @@ class TestPulseAssembler(QiskitTestCase):
         qc.x(0)
         qc.measure(0, 0)
         with pulse.build(backend, name="x") as x_q0:
-            pulse.play(pulse.Gaussian(duration=128, amp=0.1, sigma=16), pulse.drive_channel(0))
+            pulse.play(
+                pulse.Gaussian(duration=128, amp=0.1, sigma=16), channel=pulse.drive_channel(0)
+            )
 
         qc.add_calibration("x", (0,), x_q0)
 

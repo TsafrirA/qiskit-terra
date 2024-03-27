@@ -132,14 +132,14 @@ class TestRZXCalibrationBuilder(TestCalibrationBuilder):
                 u0p_params["width"] = width
                 builder.play(
                     GaussianSquare(**u0p_params),
-                    ControlChannel(0),
+                    channel=ControlChannel(0),
                 )
                 d1p_params = d1p_play.pulse.parameters
                 d1p_params["duration"] = duration
                 d1p_params["width"] = width
                 builder.play(
                     GaussianSquare(**d1p_params),
-                    DriveChannel(1),
+                    channel=DriveChannel(1),
                 )
             # Get Schedule for 'x' gate from the backend.
             builder.call(inst_sched_map._get_calibration_entry("x", (0,)).get_schedule())
@@ -151,14 +151,14 @@ class TestRZXCalibrationBuilder(TestCalibrationBuilder):
                 u0m_params["width"] = width
                 builder.play(
                     GaussianSquare(**u0m_params),
-                    ControlChannel(0),
+                    channel=ControlChannel(0),
                 )
                 d1m_params = d1m_play.pulse.parameters
                 d1m_params["duration"] = duration
                 d1m_params["width"] = width
                 builder.play(
                     GaussianSquare(**d1m_params),
-                    DriveChannel(1),
+                    channel=DriveChannel(1),
                 )
             # Get Schedule for 'x' gate from the backend.
             builder.call(inst_sched_map._get_calibration_entry("x", (0,)).get_schedule())
@@ -214,14 +214,14 @@ class TestRZXCalibrationBuilder(TestCalibrationBuilder):
                 u0p_params["width"] = width
                 builder.play(
                     GaussianSquare(**u0p_params),
-                    ControlChannel(0),
+                    channel=ControlChannel(0),
                 )
                 d1p_params = d1p_play.pulse.parameters
                 d1p_params["duration"] = duration
                 d1p_params["width"] = width
                 builder.play(
                     GaussianSquare(**d1p_params),
-                    DriveChannel(1),
+                    channel=DriveChannel(1),
                 )
 
             # Get Schedule for 'x' gate from the backend.
@@ -234,14 +234,14 @@ class TestRZXCalibrationBuilder(TestCalibrationBuilder):
                 u0m_params["width"] = width
                 builder.play(
                     GaussianSquare(**u0m_params),
-                    ControlChannel(0),
+                    channel=ControlChannel(0),
                 )
                 d1m_params = d1m_play.pulse.parameters
                 d1m_params["duration"] = duration
                 d1m_params["width"] = width
                 builder.play(
                     GaussianSquare(**d1m_params),
-                    DriveChannel(1),
+                    channel=DriveChannel(1),
                 )
 
             # Get Schedule for 'x' gate from the backend.
@@ -411,16 +411,16 @@ class TestRZXCalibrationBuilderNoEcho(TestCalibrationBuilder):
             u0p_params["width"] = width
             builder.play(
                 GaussianSquare(**u0p_params),
-                ControlChannel(0),
+                channel=ControlChannel(0),
             )
             d1p_params = d1p_play.pulse.parameters
             d1p_params["duration"] = duration
             d1p_params["width"] = width
             builder.play(
                 GaussianSquare(**d1p_params),
-                DriveChannel(1),
+                channel=DriveChannel(1),
             )
-            builder.delay(duration, DriveChannel(0))
+            builder.delay(duration, channel=DriveChannel(0))
 
         return ref_sched
 
@@ -501,7 +501,7 @@ class TestRXCalibrationBuilder(QiskitTestCase):
         """Test that supported() returns False when the default SX calibration is not a DRAG."""
         target = Target()
         with builder.build() as square_sx_cal:
-            builder.play(Square(amp=0.1, duration=160, phase=0), DriveChannel(0))
+            builder.play(Square(amp=0.1, duration=160, phase=0), channel=DriveChannel(0))
         target.add_instruction(SXGate(), {(0,): InstructionProperties(calibration=square_sx_cal)})
         tp = RXCalibrationBuilder(target)
         qubits = (0,)
@@ -533,7 +533,7 @@ class TestRXCalibrationBuilder(QiskitTestCase):
                 Drag(
                     amp=sx_amp, beta=sx_beta, sigma=sx_sigma, duration=sx_duration, angle=sx_angle
                 ),
-                DriveChannel(0),
+                channel=DriveChannel(0),
             )
         dummy_target.add_instruction(
             SXGate(), {(0,): InstructionProperties(calibration=dummy_sx_cal)}

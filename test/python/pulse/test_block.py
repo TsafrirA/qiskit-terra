@@ -724,23 +724,23 @@ class TestBlockFilter(BaseTestBlock):
     def test_filter_channels(self):
         """Test filtering over channels."""
         with pulse.build() as blk:
-            pulse.play(self.test_waveform0, self.d0)
-            pulse.delay(10, self.d0)
-            pulse.play(self.test_waveform1, self.d1)
+            pulse.play(self.test_waveform0, channel=self.d0)
+            pulse.delay(10, channel=self.d0)
+            pulse.play(self.test_waveform1, channel=self.d1)
 
         filtered_blk = self._filter_and_test_consistency(blk, channels=[self.d0])
         self.assertEqual(len(filtered_blk.channels), 1)
         self.assertTrue(self.d0 in filtered_blk.channels)
         with pulse.build() as ref_blk:
-            pulse.play(self.test_waveform0, self.d0)
-            pulse.delay(10, self.d0)
+            pulse.play(self.test_waveform0, channel=self.d0)
+            pulse.delay(10, channel=self.d0)
         self.assertEqual(filtered_blk, ref_blk)
 
         filtered_blk = self._filter_and_test_consistency(blk, channels=[self.d1])
         self.assertEqual(len(filtered_blk.channels), 1)
         self.assertTrue(self.d1 in filtered_blk.channels)
         with pulse.build() as ref_blk:
-            pulse.play(self.test_waveform1, self.d1)
+            pulse.play(self.test_waveform1, channel=self.d1)
         self.assertEqual(filtered_blk, ref_blk)
 
         filtered_blk = self._filter_and_test_consistency(blk, channels=[self.d0, self.d1])
@@ -753,8 +753,8 @@ class TestBlockFilter(BaseTestBlock):
         """Test filtering over channels in a nested block."""
         with pulse.build() as blk:
             with pulse.align_sequential():
-                pulse.play(self.test_waveform0, self.d0)
-                pulse.delay(5, self.d0)
+                pulse.play(self.test_waveform0, channel=self.d0)
+                pulse.delay(5, channel=self.d0)
                 pulse.call(
                     self.backend.defaults()
                     .instruction_schedule_map._get_calibration_entry("cx", (0, 1))
@@ -772,17 +772,17 @@ class TestBlockFilter(BaseTestBlock):
             pulse.acquire(5, pulse.AcquireChannel(0), pulse.MemorySlot(0))
 
             with pulse.build() as blk_internal:
-                pulse.play(self.test_waveform1, self.d1)
+                pulse.play(self.test_waveform1, channel=self.d1)
 
             pulse.call(blk_internal)
             pulse.reference(name="dummy_reference")
-            pulse.delay(10, self.d0)
-            pulse.play(self.test_waveform0, self.d0)
+            pulse.delay(10, channel=self.d0)
+            pulse.play(self.test_waveform0, channel=self.d0)
             pulse.barrier(self.d0, self.d1, pulse.AcquireChannel(0), pulse.MemorySlot(0))
-            pulse.set_frequency(10, self.d0)
-            pulse.shift_frequency(5, self.d1)
-            pulse.set_phase(3.14 / 4.0, self.d0)
-            pulse.shift_phase(-3.14 / 2.0, self.d1)
+            pulse.set_frequency(10, channel=self.d0)
+            pulse.shift_frequency(5, channel=self.d1)
+            pulse.set_phase(3.14 / 4.0, channel=self.d0)
+            pulse.shift_phase(-3.14 / 2.0, channel=self.d1)
             pulse.snapshot(label="dummy_snapshot")
 
         # test filtering Acquire
@@ -856,14 +856,14 @@ class TestBlockFilter(BaseTestBlock):
     def test_filter_functionals(self):
         """Test functional filtering."""
         with pulse.build() as blk:
-            pulse.play(self.test_waveform0, self.d0, "play0")
-            pulse.delay(10, self.d0, "delay0")
+            pulse.play(self.test_waveform0, channel=self.d0, name="play0")
+            pulse.delay(10, channel=self.d0, name="delay0")
 
             with pulse.build() as blk_internal:
-                pulse.play(self.test_waveform1, self.d1, "play1")
+                pulse.play(self.test_waveform1, channel=self.d1, name="play1")
 
             pulse.call(blk_internal)
-            pulse.play(self.test_waveform1, self.d1)
+            pulse.play(self.test_waveform1, channel=self.d1)
 
         def filter_with_inst_name(inst: pulse.Instruction) -> bool:
             try:
@@ -884,15 +884,15 @@ class TestBlockFilter(BaseTestBlock):
     def test_filter_multiple(self):
         """Test filter composition."""
         with pulse.build() as blk:
-            pulse.play(pulse.Constant(100, 0.1, name="play0"), self.d0)
-            pulse.delay(10, self.d0, "delay0")
+            pulse.play(pulse.Constant(100, 0.1, name="play0"), channel=self.d0)
+            pulse.delay(10, channel=self.d0, name="delay0")
 
             with pulse.build(name="internal_blk") as blk_internal:
-                pulse.play(pulse.Constant(50, 0.1, name="play1"), self.d0)
+                pulse.play(pulse.Constant(50, 0.1, name="play1"), channel=self.d0)
 
             pulse.call(blk_internal)
             pulse.barrier(self.d0, self.d1)
-            pulse.play(pulse.Constant(100, 0.1, name="play2"), self.d1)
+            pulse.play(pulse.Constant(100, 0.1, name="play2"), channel=self.d1)
 
         def filter_with_pulse_name(inst: pulse.Instruction) -> bool:
             try:

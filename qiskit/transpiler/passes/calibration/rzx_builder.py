@@ -157,7 +157,7 @@ class RZXCalibrationBuilder(CalibrationBuilder):
         params["width"] = width
 
         stretched_pulse = GaussianSquare(**params)
-        builder.play(stretched_pulse, instruction.channel)
+        builder.play(stretched_pulse, channel=instruction.channel)
 
         return round_duration
 
@@ -300,7 +300,7 @@ class RZXCalibrationBuilderNoEcho(RZXCalibrationBuilder):
                 stretched_dur = self.rescale_cr_inst(cr_tones[0], 2 * theta)
                 self.rescale_cr_inst(comp_tones[0], 2 * theta)
                 # Placeholder to make pulse gate work
-                builder.delay(stretched_dur, DriveChannel(qubits[0]))
+                builder.delay(stretched_dur, channel=DriveChannel(qubits[0]))
             return rzx_theta
 
         raise QiskitError("RZXCalibrationBuilderNoEcho only supports hardware-native RZX gates.")

@@ -437,6 +437,7 @@ from qiskit.providers.backend import BackendV2
 from qiskit.pulse.instructions import directives
 from qiskit.pulse.schedule import Schedule, ScheduleBlock
 from qiskit.pulse.transforms.alignments import AlignmentKind
+from qiskit.pulse.model import MixedFrame, PulseTarget, Frame
 
 
 if sys.version_info >= (3, 12):
@@ -1304,12 +1305,12 @@ def phase_offset(phase: float, *channels: chans.PulseChannel) -> Generator[None,
         None
     """
     for channel in channels:
-        shift_phase(phase, channel)
+        shift_phase(phase, channel=channel)
     try:
         yield
     finally:
         for channel in channels:
-            shift_phase(-phase, channel)
+            shift_phase(-phase, channel=channel)
 
 
 @contextmanager
@@ -1360,7 +1361,7 @@ def frequency_offset(
     t0 = builder.get_context().duration
 
     for channel in channels:
-        shift_frequency(frequency, channel)
+        shift_frequency(frequency, channel=channel)
     try:
         yield
     finally:
@@ -1369,10 +1370,10 @@ def frequency_offset(
 
             accumulated_phase = 2 * np.pi * ((duration * builder.get_dt() * frequency) % 1)
             for channel in channels:
-                shift_phase(-accumulated_phase, channel)
+                shift_phase(-accumulated_phase, channel=channel)
 
         for channel in channels:
-            shift_frequency(-frequency, channel)
+            shift_frequency(-frequency, channel=channel)
 
 
 # Channels
@@ -1479,7 +1480,15 @@ def control_channels(*qubits: Iterable[int]) -> list[chans.ControlChannel]:
 
 
 # Base Instructions
-def delay(duration: int, channel: chans.Channel, name: str | None = None):
+def delay(
+    duration: int,
+    *,
+    target: PulseTarget = None,
+    frame: Frame = None,
+    channel: chans.PulseChannel = None,
+    mixed_frame: MixedFrame = None,
+    name: str | None = None,
+):
     """Delay on a ``channel`` for a ``duration``.
 
     Examples:
@@ -1498,10 +1507,27 @@ def delay(duration: int, channel: chans.Channel, name: str | None = None):
         channel: Channel to delay on.
         name: Name of the instruction.
     """
-    append_instruction(instructions.Delay(duration, channel=channel, name=name))
+    append_instruction(
+        instructions.Delay(
+            duration,
+            channel=channel,
+            mixed_frame=mixed_frame,
+            target=target,
+            frame=frame,
+            name=name,
+        )
+    )
 
 
-def play(pulse: library.Pulse | np.ndarray, channel: chans.PulseChannel, name: str | None = None):
+def play(
+    pulse: library.Pulse | np.ndarray,
+    *,
+    target: PulseTarget = None,
+    frame: Frame = None,
+    channel: chans.PulseChannel = None,
+    mixed_frame: MixedFrame = None,
+    name: str | None = None,
+):
     """Play a ``pulse`` on a ``channel``.
 
     Examples:
@@ -1523,7 +1549,11 @@ def play(pulse: library.Pulse | np.ndarray, channel: chans.PulseChannel, name: s
     if not isinstance(pulse, library.Pulse):
         pulse = library.Waveform(pulse)
 
-    append_instruction(instructions.Play(pulse, channel=channel, name=name))
+    append_instruction(
+        instructions.Play(
+            pulse, channel=channel, mixed_frame=mixed_frame, target=target, frame=frame, name=name
+        )
+    )
 
 
 class _MetaDataType(TypedDict, total=False):
@@ -1587,7 +1617,15 @@ def acquire(
         raise exceptions.PulseError(f'Register of type: "{type(register)}" is not supported')
 
 
-def set_frequency(frequency: float, channel: chans.PulseChannel, name: str | None = None):
+def set_frequency(
+    frequency: float,
+    *,
+    target: PulseTarget = None,
+    frame: Frame = None,
+    channel: chans.PulseChannel = None,
+    mixed_frame: MixedFrame = None,
+    name: str | None = None,
+):
     """Set the ``frequency`` of a pulse ``channel``.
 
     Examples:
@@ -1606,10 +1644,27 @@ def set_frequency(frequency: float, channel: chans.PulseChannel, name: str | Non
         channel: Channel to set frequency of.
         name: Name of the instruction.
     """
-    append_instruction(instructions.SetFrequency(frequency, channel=channel, name=name))
+    append_instruction(
+        instructions.SetFrequency(
+            frequency,
+            channel=channel,
+            mixed_frame=mixed_frame,
+            target=target,
+            frame=frame,
+            name=name,
+        )
+    )
 
 
-def shift_frequency(frequency: float, channel: chans.PulseChannel, name: str | None = None):
+def shift_frequency(
+    frequency: float,
+    *,
+    target: PulseTarget = None,
+    frame: Frame = None,
+    channel: chans.PulseChannel = None,
+    mixed_frame: MixedFrame = None,
+    name: str | None = None,
+):
     """Shift the ``frequency`` of a pulse ``channel``.
 
     Examples:
@@ -1629,10 +1684,27 @@ def shift_frequency(frequency: float, channel: chans.PulseChannel, name: str | N
         channel: Channel to shift frequency of.
         name: Name of the instruction.
     """
-    append_instruction(instructions.ShiftFrequency(frequency, channel=channel, name=name))
+    append_instruction(
+        instructions.ShiftFrequency(
+            frequency,
+            channel=channel,
+            mixed_frame=mixed_frame,
+            target=target,
+            frame=frame,
+            name=name,
+        )
+    )
 
 
-def set_phase(phase: float, channel: chans.PulseChannel, name: str | None = None):
+def set_phase(
+    phase: float,
+    *,
+    target: PulseTarget = None,
+    frame: Frame = None,
+    channel: chans.PulseChannel = None,
+    mixed_frame: MixedFrame = None,
+    name: str | None = None,
+):
     """Set the ``phase`` of a pulse ``channel``.
 
     Examples:
@@ -1654,10 +1726,22 @@ def set_phase(phase: float, channel: chans.PulseChannel, name: str | None = None
         channel: Channel to set phase of.
         name: Name of the instruction.
     """
-    append_instruction(instructions.SetPhase(phase, channel=channel, name=name))
+    append_instruction(
+        instructions.SetPhase(
+            phase, channel=channel, mixed_frame=mixed_frame, target=target, frame=frame, name=name
+        )
+    )
 
 
-def shift_phase(phase: float, channel: chans.PulseChannel, name: str | None = None):
+def shift_phase(
+    phase: float,
+    *,
+    target: PulseTarget = None,
+    frame: Frame = None,
+    channel: chans.PulseChannel = None,
+    mixed_frame: MixedFrame = None,
+    name: str | None = None,
+):
     """Shift the ``phase`` of a pulse ``channel``.
 
     Examples:
@@ -1678,7 +1762,11 @@ def shift_phase(phase: float, channel: chans.PulseChannel, name: str | None = No
         channel: Channel to shift phase of.
         name: Name of the instruction.
     """
-    append_instruction(instructions.ShiftPhase(phase, channel=channel, name=name))
+    append_instruction(
+        instructions.ShiftPhase(
+            phase, channel=channel, mixed_frame=mixed_frame, target=target, frame=frame, name=name
+        )
+    )
 
 
 def snapshot(label: str, snapshot_type: str = "statevector"):
@@ -2207,4 +2295,4 @@ def delay_qubits(duration: int, *qubits: int):
     qubit_chans = set(itertools.chain.from_iterable(qubit_channels(qubit) for qubit in qubits))
     with align_left():
         for chan in qubit_chans:
-            delay(duration, chan)
+            delay(duration, channel=chan)

@@ -1215,9 +1215,9 @@ class TestTranspile(QiskitTestCase):
         circ.append(custom_90, [1])
 
         with pulse.build() as q0_x180:
-            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), channel=pulse.DriveChannel(0))
         with pulse.build() as q1_y90:
-            pulse.play(pulse.library.Gaussian(20, -1.0, 3.0), pulse.DriveChannel(1))
+            pulse.play(pulse.library.Gaussian(20, -1.0, 3.0), channel=pulse.DriveChannel(1))
 
         # Add calibration
         circ.add_calibration(custom_180, [0], q0_x180)
@@ -1238,7 +1238,7 @@ class TestTranspile(QiskitTestCase):
         circ.h(0)
 
         with pulse.build() as q0_x180:
-            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), channel=pulse.DriveChannel(0))
 
         # Add calibration
         circ.add_calibration("h", [0], q0_x180)
@@ -1257,7 +1257,7 @@ class TestTranspile(QiskitTestCase):
         circ.append(custom_180, [0])
 
         with pulse.build() as q0_x180:
-            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), channel=pulse.DriveChannel(0))
 
         # Add calibration
         circ.add_calibration(custom_180, [1], q0_x180)
@@ -1277,7 +1277,7 @@ class TestTranspile(QiskitTestCase):
         circ.h(1)
 
         with pulse.build() as q0_x180:
-            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), channel=pulse.DriveChannel(0))
 
         # Add calibration
         circ.add_calibration("h", [1], q0_x180)
@@ -1300,7 +1300,7 @@ class TestTranspile(QiskitTestCase):
         circ.h(1)
 
         with pulse.build() as q0_x180:
-            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), channel=pulse.DriveChannel(0))
 
         circ.add_calibration(x_180, [0], q0_x180)
         circ.add_calibration("h", [1], q0_x180)  # 'h' is calibrated on qubit 1
@@ -1321,7 +1321,9 @@ class TestTranspile(QiskitTestCase):
 
         def q0_rxt(tau):
             with pulse.build() as q0_rxt:
-                pulse.play(pulse.library.Gaussian(20, 0.4 * tau, 3.0), pulse.DriveChannel(0))
+                pulse.play(
+                    pulse.library.Gaussian(20, 0.4 * tau, 3.0), channel=pulse.DriveChannel(0)
+                )
             return q0_rxt
 
         circ.add_calibration("rxt", [0], q0_rxt(tau), [2 * 3.14 * tau])
@@ -1348,7 +1350,7 @@ class TestTranspile(QiskitTestCase):
         qc.append(Gate("custom", 1, []), [0])
 
         with pulse.build() as cal:
-            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), pulse.DriveChannel(0))
+            pulse.play(pulse.library.Gaussian(20, 1.0, 3.0), channel=pulse.DriveChannel(0))
         qc.add_calibration("custom", [0], cal)
 
         out = transpile(qc, scheduling_method="alap")
@@ -1368,31 +1370,40 @@ class TestTranspile(QiskitTestCase):
 
         with pulse.build(backend=backend, name="custom") as my_schedule:
             pulse.play(
-                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16), pulse.drive_channel(0)
+                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16),
+                channel=pulse.drive_channel(0),
             )
             pulse.play(
-                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16), pulse.drive_channel(1)
+                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16),
+                channel=pulse.drive_channel(1),
             )
             pulse.play(
-                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16), pulse.drive_channel(2)
+                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16),
+                channel=pulse.drive_channel(2),
             )
             pulse.play(
-                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16), pulse.drive_channel(3)
+                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16),
+                channel=pulse.drive_channel(3),
             )
             pulse.play(
-                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16), pulse.drive_channel(4)
+                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16),
+                channel=pulse.drive_channel(4),
             )
             pulse.play(
-                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16), pulse.ControlChannel(1)
+                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16),
+                channel=pulse.ControlChannel(1),
             )
             pulse.play(
-                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16), pulse.ControlChannel(2)
+                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16),
+                channel=pulse.ControlChannel(2),
             )
             pulse.play(
-                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16), pulse.ControlChannel(3)
+                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16),
+                channel=pulse.ControlChannel(3),
             )
             pulse.play(
-                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16), pulse.ControlChannel(4)
+                pulse.library.Gaussian(duration=128, amp=0.1, sigma=16),
+                channel=pulse.ControlChannel(4),
             )
         circ.add_calibration("my_custom_gate", [0, 1, 2, 3, 4], my_schedule, [])
         trans_circ = transpile(
